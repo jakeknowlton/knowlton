@@ -1,6 +1,18 @@
-def main():
-    print("Hello from knowlton!")
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+
+from auth.router import router as auth_router
+from database import create_db_and_tables
 
 
-if __name__ == "__main__":
-    main()
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
+    create_db_and_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(auth_router)
