@@ -1,0 +1,23 @@
+{
+  "name": "knowlton",
+  "version": "0.1.0",
+  "description": "Knowlton monorepo: backend API (apps/api) and frontends (apps/web, apps/mobile).",
+  "private": true,
+  "scripts": {
+    "web": "pnpm --filter web dev",
+    "mobile": "pnpm --filter mobile start",
+    "api": "cd apps/api && uv run fastapi dev",
+    "api:test": "cd apps/api && uv run pytest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.8.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module"
+}

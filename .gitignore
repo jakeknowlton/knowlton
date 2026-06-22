@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
 
 # Virtual environments
 .venv
@@ -14,3 +15,13 @@ wheels/
 
 # SQLite databases
 app.db
+
+# Node / JS tooling
+node_modules/
+.turbo/
+.next/
+.expo/
+*.tsbuildinfo
+
+# OS / editor
+.DS_Store
