@@ -14,6 +14,10 @@ class JWTPayload(TypedDict):
     exp: int
 
 
+def now_timestamp() -> int:
+    return int(datetime.now(timezone.utc).timestamp())
+
+
 def hash_password(password: str) -> str:
     return _password_hash.hash(password)
 
@@ -23,7 +27,9 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 
 def create_access_token(username: str, expires_delta: timedelta | None = None) -> str:
-    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.access_token_expire_minutes))
+    expire = datetime.now(timezone.utc) + (
+        expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
+    )
     payload: JWTPayload = {"sub": username, "exp": int(expire.timestamp())}
     return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
 
