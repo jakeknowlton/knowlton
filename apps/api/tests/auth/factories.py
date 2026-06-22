@@ -39,11 +39,21 @@ def login(
     username: str = "alice",
     password: str = DEFAULT_PASSWORD,
 ):
-    """Hit the token endpoint and return the raw response."""
+    """Hit the token endpoint and return the raw response.
+
+    On success the refresh token is set as a cookie on ``client``'s jar, so
+    follow-up ``/auth/refresh`` and ``/auth/logout`` calls send it automatically.
+    Read its value with :func:`refresh_cookie`.
+    """
     return client.post(
         "/auth/token",
         data={"username": username, "password": password},
     )
+
+
+def refresh_cookie(client: TestClient) -> str | None:
+    """Return the refresh token currently held in the client's cookie jar."""
+    return client.cookies.get("refresh_token")
 
 
 def auth_headers(

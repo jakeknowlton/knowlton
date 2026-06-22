@@ -14,16 +14,8 @@ class UserRead(BaseModel):
     disabled: bool
 
 
-class TokenPair(BaseModel):
+class TokenResponse(BaseModel):
+    # Only the short-lived access token is returned in the body; the refresh
+    # token travels in an HttpOnly cookie and is never exposed to JS.
     access_token: str
-    refresh_token: str
     token_type: str = "bearer"
-
-
-class RefreshRequest(BaseModel):
-    refresh_token: str
-
-
-class LogoutRequest(BaseModel):
-    refresh_token: str
-    all_devices: bool = False

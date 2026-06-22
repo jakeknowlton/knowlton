@@ -74,7 +74,10 @@ def client(session: Session) -> Generator[TestClient, None, None]:
         yield session
 
     app.dependency_overrides[get_session] = override_get_session
-    with TestClient(app) as test_client:
+    # An https base URL so the test transport sends the `Secure` refresh-token
+    # cookie back on subsequent requests (httpx withholds Secure cookies over
+    # plain http), exercising the real cookie round-trip.
+    with TestClient(app, base_url="https://testserver") as test_client:
         yield test_client
     app.dependency_overrides.clear()
 

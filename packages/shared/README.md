@@ -1,7 +1,15 @@
 # @knowlton/shared
 
-Cross-frontend TypeScript shared by `web` and `mobile` (placeholder):
-shared types, validation schemas, constants, and small utilities.
+Framework-agnostic domain model shared by `web` and `mobile`: types and pure
+helpers, no I/O.
 
-Keep backend-derived API types in `@knowlton/api-client`; keep app-level
-shared logic here.
+```
+src/
+  laundry.ts   LaundryStatus, LaundryLoad, status ordering/labels, countdowns
+  user.ts      User
+  index.ts
+```
+
+Keep HTTP/transport concerns in `@knowlton/api-client`; keep anything that's
+just data shapes or pure logic here. The package is consumed as TypeScript
+source (no build step) via its `exports` map.

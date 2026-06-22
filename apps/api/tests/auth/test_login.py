@@ -5,7 +5,7 @@ from auth.utils import decode_token
 from tests.auth.factories import DEFAULT_PASSWORD, login, make_user
 
 
-def test_login_returns_token_pair(client: TestClient, session: Session) -> None:
+def test_login_returns_access_token(client: TestClient, session: Session) -> None:
     make_user(session, username="alice")
 
     response = login(client, username="alice")
@@ -14,7 +14,22 @@ def test_login_returns_token_pair(client: TestClient, session: Session) -> None:
     body = response.json()
     assert body["token_type"] == "bearer"
     assert body["access_token"]
-    assert body["refresh_token"]
+    # The refresh token must never be exposed in the response body.
+    assert "refresh_token" not in body
+
+
+def test_login_sets_httponly_refresh_cookie(
+    client: TestClient, session: Session
+) -> None:
+    make_user(session, username="alice")
+
+    response = login(client, username="alice")
+
+    assert client.cookies.get("refresh_token")
+    set_cookie = response.headers["set-cookie"].lower()
+    assert "httponly" in set_cookie
+    assert "samesite=lax" in set_cookie
+    assert "path=/auth" in set_cookie
 
 
 def test_login_access_token_encodes_username(
@@ -34,6 +49,7 @@ def test_login_wrong_password_returns_401(client: TestClient, session: Session) 
 
     assert response.status_code == 401
     assert response.json()["detail"] == "Incorrect username or password"
+    assert client.cookies.get("refresh_token") is None
 
 
 def test_login_unknown_user_returns_401(client: TestClient) -> None:

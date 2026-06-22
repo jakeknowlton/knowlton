@@ -1,10 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
 
-from auth.schemas import LogoutRequest, RefreshRequest, TokenPair, UserCreate, UserRead
+from auth.cookies import COOKIE_NAME, clear_refresh_cookie, set_refresh_cookie
+from auth.schemas import TokenResponse, UserCreate, UserRead
 from auth.service import (
     authenticate_user,
     create_refresh_token,
@@ -18,12 +19,15 @@ from database import get_session
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+RefreshCookie = Annotated[str | None, Cookie(alias=COOKIE_NAME)]
 
-@router.post("/token", response_model=TokenPair)
+
+@router.post("/token", response_model=TokenResponse)
 def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: Annotated[Session, Depends(get_session)],
-) -> TokenPair:
+    response: Response,
+) -> TokenResponse:
     user = authenticate_user(session, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -31,36 +35,39 @@ def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return TokenPair(
-        access_token=create_access_token(user.username),
-        refresh_token=create_refresh_token(session, user),
-    )
+    set_refresh_cookie(response, create_refresh_token(session, user))
+    return TokenResponse(access_token=create_access_token(user.username))
 
 
-@router.post("/refresh", response_model=TokenPair)
+@router.post("/refresh", response_model=TokenResponse)
 def refresh(
-    body: RefreshRequest,
     session: Annotated[Session, Depends(get_session)],
-) -> TokenPair:
-    result = use_refresh_token(session, body.refresh_token)
+    response: Response,
+    refresh_token: RefreshCookie = None,
+) -> TokenResponse:
+    result = use_refresh_token(session, refresh_token) if refresh_token else None
     if not result:
+        # Clear a stale cookie so the browser stops presenting a dead token.
+        clear_refresh_cookie(response)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token",
         )
     user, new_refresh_token = result
-    return TokenPair(
-        access_token=create_access_token(user.username),
-        refresh_token=new_refresh_token,
-    )
+    set_refresh_cookie(response, new_refresh_token)
+    return TokenResponse(access_token=create_access_token(user.username))
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(
-    body: LogoutRequest,
     session: Annotated[Session, Depends(get_session)],
+    response: Response,
+    refresh_token: RefreshCookie = None,
+    all_devices: bool = False,
 ) -> None:
-    revoke_refresh_token(session, body.refresh_token, all_devices=body.all_devices)
+    if refresh_token:
+        revoke_refresh_token(session, refresh_token, all_devices=all_devices)
+    clear_refresh_cookie(response)
 
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)

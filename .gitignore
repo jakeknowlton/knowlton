@@ -21,6 +21,7 @@ node_modules/
 .turbo/
 .next/
 .expo/
+.pnpm-store/
 *.tsbuildinfo
 
 # OS / editor
