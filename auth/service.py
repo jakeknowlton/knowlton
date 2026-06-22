@@ -82,10 +82,20 @@ def use_refresh_token(session: Session, token: str) -> tuple[User, str] | None:
     return user, new_token
 
 
-def revoke_refresh_token(session: Session, token: str) -> None:
+def revoke_refresh_token(
+    session: Session, token: str, *, all_devices: bool = False
+) -> None:
     db_token = session.exec(
         select(RefreshToken).where(RefreshToken.token == token)
     ).first()
-    if db_token:
+    if not db_token:
+        return
+    if all_devices:
+        # Revoke every refresh token belonging to the presented token's owner.
+        for user_token in session.exec(
+            select(RefreshToken).where(RefreshToken.user_id == db_token.user_id)
+        ).all():
+            session.delete(user_token)
+    else:
         session.delete(db_token)
-        session.commit()
+    session.commit()

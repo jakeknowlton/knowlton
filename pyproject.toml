@@ -12,3 +12,13 @@ dependencies = [
     "pyjwt>=2.13.0",
     "sqlmodel>=0.0.38",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

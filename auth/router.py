@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
 
-from auth.schemas import RefreshRequest, TokenPair, UserCreate, UserRead
+from auth.schemas import LogoutRequest, RefreshRequest, TokenPair, UserCreate, UserRead
 from auth.service import (
     authenticate_user,
     create_refresh_token,
@@ -57,10 +57,10 @@ def refresh(
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(
-    body: RefreshRequest,
+    body: LogoutRequest,
     session: Annotated[Session, Depends(get_session)],
 ) -> None:
-    revoke_refresh_token(session, body.refresh_token)
+    revoke_refresh_token(session, body.refresh_token, all_devices=body.all_devices)
 
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
