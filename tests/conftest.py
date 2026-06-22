@@ -27,8 +27,10 @@ from sqlalchemy import Engine
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
+from auth.models import User
 from database import get_session
 from main import app
+from tests.auth.factories import auth_headers, make_user
 
 
 @pytest.fixture
@@ -75,3 +77,22 @@ def client(session: Session) -> Generator[TestClient, None, None]:
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+# --- Authentication ---------------------------------------------------------
+# Authentication isn't a peer feature; it's the gate in front of every protected
+# endpoint, so a "logged-in client" belongs here as shared infrastructure rather
+# than in any one feature's test directory. These build on the auth factories.
+
+
+@pytest.fixture
+def user(session: Session) -> User:
+    """A default persisted user, usable as the subject of authenticated calls."""
+    return make_user(session)
+
+
+@pytest.fixture
+def auth_client(client: TestClient, user: User) -> TestClient:
+    """A TestClient pre-authenticated as `user` (token attached to all requests)."""
+    client.headers.update(auth_headers(client))
+    return client
