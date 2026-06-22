@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import TypedDict
+from typing import Any, TypedDict, cast
 
 import jwt
 from pwdlib import PasswordHash
@@ -31,8 +31,13 @@ def create_access_token(username: str, expires_delta: timedelta | None = None) -
         expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
     )
     payload: JWTPayload = {"sub": username, "exp": int(expire.timestamp())}
-    return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
+    return jwt.encode(
+        cast(dict[str, Any], payload), settings.secret_key, algorithm=settings.algorithm
+    )
 
 
 def decode_token(token: str) -> JWTPayload:
-    return jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+    return cast(
+        JWTPayload,
+        jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm]),
+    )

@@ -11,4 +11,4 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./app.db"
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]
