@@ -10,10 +10,11 @@
     "format:check": "prettier --check .",
     "lint": "eslint packages && pnpm --filter web lint",
     "lint:fix": "eslint packages --fix && pnpm --filter web lint --fix",
-    "check": "pnpm format:check && pnpm lint && pnpm --filter web check && pnpm --filter @knowlton/shared check && pnpm --filter @knowlton/api-client check && pnpm api:types:check",
+    "check": "pnpm format:check && pnpm lint && pnpm --filter web check && pnpm --filter @knowlton/shared check && pnpm --filter @knowlton/api-client check && pnpm api:typecheck && pnpm api:types:check",
     "verify": "pnpm check && pnpm build && pnpm api:test",
     "api": "cd apps/api && uv run fastapi dev",
     "api:test": "cd apps/api && uv run pytest",
+    "api:typecheck": "cd apps/api && uv run basedpyright",
     "api:types": "cd apps/api && uv run python scripts/generate_ts_types.py ../../packages/api-client/src/generated.ts",
     "api:types:check": "cd apps/api && uv run python scripts/generate_ts_types.py ../../packages/api-client/src/generated.ts --check"
   },

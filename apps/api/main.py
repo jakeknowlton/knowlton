@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from auth.router import router as auth_router
 from config import settings
 from database import create_db_and_tables
+from food.router import router as food_router
 from home.router import router as home_router
 
 
@@ -31,3 +32,4 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(home_router)
+app.include_router(food_router)
