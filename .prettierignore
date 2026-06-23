@@ -1,3 +1,29 @@
-# Ignore artifacts:
-build
-coverage
+# Opt-in formatting.
+#
+# By default nothing is formatted by Prettier. Each app/package must opt in
+# by un-ignoring itself below. apps/api is intentionally left out — it is
+# Python and formatted by Black, not Prettier.
+
+# Ignore everything at the root (anchored, so it only matches top-level
+# entries and we can re-include specific subtrees below).
+/*
+
+# Opt-in: frontend apps
+!/apps
+/apps/*
+!/apps/web
+!/apps/mobile
+
+# Opt-in: shared TypeScript packages
+!/packages
+/packages/*
+!/packages/api-client
+!/packages/shared
+
+# Always ignore generated / vendored files inside the opt-in subtrees.
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/*.lock
+**/generated.ts
