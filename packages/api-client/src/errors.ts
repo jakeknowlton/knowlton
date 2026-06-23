@@ -11,17 +11,24 @@ export class ApiError extends Error {
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 /** Build an ApiError from a non-OK Response, extracting FastAPI's `detail`. */
 export async function toApiError(response: Response): Promise<ApiError> {
   let detail = response.statusText || 'Request failed';
   try {
-    const body = await response.json();
-    if (typeof body?.detail === 'string') {
-      detail = body.detail;
-    } else if (Array.isArray(body?.detail)) {
+    const body: unknown = await response.json();
+    const raw = isRecord(body) ? body.detail : undefined;
+    if (typeof raw === 'string') {
+      detail = raw;
+    } else if (Array.isArray(raw)) {
       // FastAPI validation errors arrive as a list of { msg, loc, ... }.
-      detail = body.detail
-        .map((item: { msg?: string }) => item.msg)
+      detail = (raw as unknown[])
+        .map((item) =>
+          isRecord(item) && typeof item.msg === 'string' ? item.msg : '',
+        )
         .filter(Boolean)
         .join(', ');
     }

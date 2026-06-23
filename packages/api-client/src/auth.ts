@@ -62,7 +62,7 @@ export function createAuth(
       return http.refresh();
     },
 
-    isAuthenticated: tokens.isAuthenticated,
-    subscribe: tokens.subscribe,
+    isAuthenticated: () => tokens.isAuthenticated(),
+    subscribe: (listener) => tokens.subscribe(listener),
   };
 }

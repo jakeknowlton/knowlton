@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { api } from '../shared/api/client';
-import Login from '../auth/components/Login.vue';
-import Laundry from '../home/laundry/components/Laundry.vue';
+import LoginView from '../auth/components/LoginView.vue';
+import LaundryView from '../home/laundry/components/LaundryView.vue';
 
 type SessionStatus = 'loading' | 'authenticated' | 'anonymous';
 
@@ -34,6 +34,6 @@ onUnmounted(() => {
   <main v-if="session === 'loading'">
     <p>Loading...</p>
   </main>
-  <Laundry v-else-if="session === 'authenticated'" />
-  <Login v-else />
+  <LaundryView v-else-if="session === 'authenticated'" />
+  <LoginView v-else />
 </template>

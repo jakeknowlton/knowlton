@@ -8,7 +8,9 @@
     "build": "pnpm --filter web build",
     "format": "prettier --write . && cd apps/api && uv run black . -t py314",
     "format:check": "prettier --check .",
-    "check": "pnpm format:check && pnpm --filter web check && pnpm --filter @knowlton/shared check && pnpm --filter @knowlton/api-client check && pnpm api:types:check",
+    "lint": "eslint packages && pnpm --filter web lint",
+    "lint:fix": "eslint packages --fix && pnpm --filter web lint --fix",
+    "check": "pnpm format:check && pnpm lint && pnpm --filter web check && pnpm --filter @knowlton/shared check && pnpm --filter @knowlton/api-client check && pnpm api:types:check",
     "verify": "pnpm check && pnpm build && pnpm api:test",
     "api": "cd apps/api && uv run fastapi dev",
     "api:test": "cd apps/api && uv run pytest",
@@ -27,6 +29,11 @@
   },
   "type": "module",
   "devDependencies": {
-    "prettier": "3.8.4"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
+    "prettier": "3.8.4",
+    "typescript-eslint": "^8.61.1"
   }
 }

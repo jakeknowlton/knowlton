@@ -50,7 +50,7 @@ export function createHttp(baseUrl: string, tokens: TokenStore): Http {
   async function send(path: string, init: RequestInit): Promise<Response> {
     const headers = new Headers(init.headers);
     const token = tokens.get();
-    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (token !== null) headers.set('Authorization', `Bearer ${token}`);
     if (init.body !== undefined && !headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
