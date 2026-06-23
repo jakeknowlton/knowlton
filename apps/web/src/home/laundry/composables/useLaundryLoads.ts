@@ -1,39 +1,39 @@
-import { onMounted, onUnmounted, ref } from 'vue'
-import type { LaundryLoadRead, LaundryLoadUpdate } from '@knowlton/api-client'
+import { onMounted, onUnmounted, ref } from 'vue';
+import type { LaundryLoadRead, LaundryLoadUpdate } from '@knowlton/api-client';
 import {
   formatDuration,
   machineFor,
   remainingSeconds,
   type LaundryStatus,
-} from '@knowlton/shared'
-import { api } from '../../../shared/api/client'
-import { errorMessage } from '../../../shared/errors/messages'
+} from '@knowlton/shared';
+import { api } from '../../../shared/api/client';
+import { errorMessage } from '../../../shared/errors/messages';
 
 export function useLaundryLoads() {
-  const loads = ref<LaundryLoadRead[]>([])
-  const error = ref<string | null>(null)
-  const newLabel = ref('')
-  const now = ref(Date.now())
+  const loads = ref<LaundryLoadRead[]>([]);
+  const error = ref<string | null>(null);
+  const newLabel = ref('');
+  const now = ref(Date.now());
 
   async function run(action: () => Promise<void>) {
     try {
-      await action()
-      error.value = null
+      await action();
+      error.value = null;
     } catch (e) {
-      error.value = errorMessage(e)
+      error.value = errorMessage(e);
     }
   }
 
   async function refreshLoads() {
-    loads.value = await api.laundry.list()
+    loads.value = await api.laundry.list();
   }
 
   async function createLoad() {
     await run(async () => {
-      await api.laundry.create({ label: newLabel.value.trim() || null })
-      newLabel.value = ''
-      await refreshLoads()
-    })
+      await api.laundry.create({ label: newLabel.value.trim() || null });
+      newLabel.value = '';
+      await refreshLoads();
+    });
   }
 
   async function changeStatus(
@@ -41,46 +41,47 @@ export function useLaundryLoads() {
     status: LaundryStatus,
     durationMinutes: number,
   ) {
-    const patch: LaundryLoadUpdate = { status }
-    const minutes = Math.max(1, durationMinutes)
+    const patch: LaundryLoadUpdate = { status };
+    const minutes = Math.max(1, durationMinutes);
 
-    if (status === 'washing') patch.washer_duration_minutes = minutes
-    if (status === 'drying') patch.dryer_duration_minutes = minutes
+    if (status === 'washing') patch.washer_duration_minutes = minutes;
+    if (status === 'drying') patch.dryer_duration_minutes = minutes;
 
     await run(async () => {
-      await api.laundry.update(load.id, patch)
-      await refreshLoads()
-    })
+      await api.laundry.update(load.id, patch);
+      await refreshLoads();
+    });
   }
 
   async function deleteLoad(load: LaundryLoadRead) {
     await run(async () => {
-      await api.laundry.remove(load.id)
-      await refreshLoads()
-    })
+      await api.laundry.remove(load.id);
+      await refreshLoads();
+    });
   }
 
   function countdown(load: LaundryLoadRead): string | null {
-    const machine = machineFor(load.status)
-    if (!machine) return null
+    const machine = machineFor(load.status);
+    if (!machine) return null;
 
-    const finish = machine === 'washer' ? load.washer_finish : load.dryer_finish
-    const seconds = remainingSeconds(finish, now.value)
-    return seconds === null ? null : formatDuration(seconds)
+    const finish =
+      machine === 'washer' ? load.washer_finish : load.dryer_finish;
+    const seconds = remainingSeconds(finish, now.value);
+    return seconds === null ? null : formatDuration(seconds);
   }
 
-  let timer: number | undefined
+  let timer: number | undefined;
 
   onMounted(() => {
-    void run(refreshLoads)
+    void run(refreshLoads);
     timer = window.setInterval(() => {
-      now.value = Date.now()
-    }, 1000)
-  })
+      now.value = Date.now();
+    }, 1000);
+  });
 
   onUnmounted(() => {
-    window.clearInterval(timer)
-  })
+    window.clearInterval(timer);
+  });
 
   return {
     loads,
@@ -90,5 +91,5 @@ export function useLaundryLoads() {
     changeStatus,
     deleteLoad,
     countdown,
-  }
+  };
 }

@@ -1,29 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { api } from '../../shared/api/client'
-import { errorMessage } from '../../shared/errors/messages'
+import { ref } from 'vue';
+import { api } from '../../shared/api/client';
+import { errorMessage } from '../../shared/errors/messages';
 
-type Mode = 'login' | 'register'
+type Mode = 'login' | 'register';
 
-const username = ref('')
-const password = ref('')
-const error = ref<string | null>(null)
-const busy = ref(false)
+const username = ref('');
+const password = ref('');
+const error = ref<string | null>(null);
+const busy = ref(false);
 
 async function submit(mode: Mode) {
-  error.value = null
-  busy.value = true
+  error.value = null;
+  busy.value = true;
 
   try {
     if (mode === 'register') {
-      await api.auth.register({ username: username.value, password: password.value })
+      await api.auth.register({
+        username: username.value,
+        password: password.value,
+      });
     }
 
-    await api.auth.login({ username: username.value, password: password.value })
+    await api.auth.login({
+      username: username.value,
+      password: password.value,
+    });
   } catch (e) {
-    error.value = errorMessage(e, 'Something went wrong')
+    error.value = errorMessage(e, 'Something went wrong');
   } finally {
-    busy.value = false
+    busy.value = false;
   }
 }
 </script>
@@ -40,12 +46,19 @@ async function submit(mode: Mode) {
 
       <label>
         Password
-        <input v-model="password" type="password" autocomplete="current-password" required />
+        <input
+          v-model="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
       </label>
 
       <div>
         <button type="submit" :disabled="busy">Log in</button>
-        <button type="button" :disabled="busy" @click="submit('register')">Register</button>
+        <button type="button" :disabled="busy" @click="submit('register')">
+          Register
+        </button>
       </div>
     </form>
 

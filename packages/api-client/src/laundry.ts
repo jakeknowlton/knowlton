@@ -1,11 +1,11 @@
-import type { Http } from "./http";
+import type { Http } from './http';
 import type {
   LaundryLoadCreate,
   LaundryLoadRead,
   LaundryLoadUpdate,
-} from "./generated";
+} from './generated';
 
-const BASE = "/laundry/loads";
+const BASE = '/laundry/loads';
 
 export interface LaundryClient {
   list(): Promise<LaundryLoadRead[]>;
@@ -21,18 +21,18 @@ export function createLaundry(http: Http): LaundryClient {
     },
     create(data) {
       return http.request<LaundryLoadRead>(BASE, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
       });
     },
     update(id, data) {
       return http.request<LaundryLoadRead>(`${BASE}/${id}`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify(data),
       });
     },
     remove(id) {
-      return http.request<void>(`${BASE}/${id}`, { method: "DELETE" });
+      return http.request<void>(`${BASE}/${id}`, { method: 'DELETE' });
     },
   };
 }

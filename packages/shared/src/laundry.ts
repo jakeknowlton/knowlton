@@ -6,23 +6,23 @@
  * labels, countdowns). The HTTP transport lives in `@knowlton/api-client`.
  */
 
-export type LaundryStatus = "dirty" | "washing" | "drying" | "folding" | "done";
+export type LaundryStatus = 'dirty' | 'washing' | 'drying' | 'folding' | 'done';
 
 /** Statuses in the order a load naturally progresses through them. */
 export const LAUNDRY_STATUSES: readonly LaundryStatus[] = [
-  "dirty",
-  "washing",
-  "drying",
-  "folding",
-  "done",
+  'dirty',
+  'washing',
+  'drying',
+  'folding',
+  'done',
 ] as const;
 
 const STATUS_LABELS: Record<LaundryStatus, string> = {
-  dirty: "Dirty",
-  washing: "Washing",
-  drying: "Drying",
-  folding: "Folding",
-  done: "Done",
+  dirty: 'Dirty',
+  washing: 'Washing',
+  drying: 'Drying',
+  folding: 'Folding',
+  done: 'Done',
 };
 
 export function statusLabel(status: LaundryStatus): string {
@@ -30,9 +30,9 @@ export function statusLabel(status: LaundryStatus): string {
 }
 
 /** Statuses that occupy a machine and therefore carry a finish countdown. */
-export function machineFor(status: LaundryStatus): "washer" | "dryer" | null {
-  if (status === "washing") return "washer";
-  if (status === "drying") return "dryer";
+export function machineFor(status: LaundryStatus): 'washer' | 'dryer' | null {
+  if (status === 'washing') return 'washer';
+  if (status === 'drying') return 'dryer';
   return null;
 }
 
@@ -62,5 +62,5 @@ export function remainingSeconds(
 export function formatDuration(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }

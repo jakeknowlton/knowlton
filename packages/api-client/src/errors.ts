@@ -5,7 +5,7 @@ export class ApiError extends Error {
 
   constructor(status: number, detail: string) {
     super(detail);
-    this.name = "ApiError";
+    this.name = 'ApiError';
     this.status = status;
     this.detail = detail;
   }
@@ -13,17 +13,17 @@ export class ApiError extends Error {
 
 /** Build an ApiError from a non-OK Response, extracting FastAPI's `detail`. */
 export async function toApiError(response: Response): Promise<ApiError> {
-  let detail = response.statusText || "Request failed";
+  let detail = response.statusText || 'Request failed';
   try {
     const body = await response.json();
-    if (typeof body?.detail === "string") {
+    if (typeof body?.detail === 'string') {
       detail = body.detail;
     } else if (Array.isArray(body?.detail)) {
       // FastAPI validation errors arrive as a list of { msg, loc, ... }.
       detail = body.detail
         .map((item: { msg?: string }) => item.msg)
         .filter(Boolean)
-        .join(", ");
+        .join(', ');
     }
   } catch {
     // Non-JSON body; keep the status text.

@@ -1,5 +1,5 @@
-import { toApiError } from "./errors";
-import type { TokenStore } from "./token-store";
+import { toApiError } from './errors';
+import type { TokenStore } from './token-store';
 
 export interface Http {
   /** Perform a JSON request, transparently refreshing on a 401 once. */
@@ -22,8 +22,8 @@ export function createHttp(baseUrl: string, tokens: TokenStore): Http {
     let response: Response;
     try {
       response = await fetch(`${baseUrl}/auth/refresh`, {
-        method: "POST",
-        credentials: "include", // send the HttpOnly refresh cookie
+        method: 'POST',
+        credentials: 'include', // send the HttpOnly refresh cookie
       });
     } catch {
       // Network failure / CORS / server down: treat as no session so callers
@@ -50,14 +50,14 @@ export function createHttp(baseUrl: string, tokens: TokenStore): Http {
   async function send(path: string, init: RequestInit): Promise<Response> {
     const headers = new Headers(init.headers);
     const token = tokens.get();
-    if (token) headers.set("Authorization", `Bearer ${token}`);
-    if (init.body !== undefined && !headers.has("Content-Type")) {
-      headers.set("Content-Type", "application/json");
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (init.body !== undefined && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
     }
     return fetch(`${baseUrl}${path}`, {
       ...init,
       headers,
-      credentials: "include",
+      credentials: 'include',
     });
   }
 

@@ -1,7 +1,7 @@
-import { toApiError } from "./errors";
-import type { TokenResponse, UserCreate, UserRead } from "./generated";
-import type { Http } from "./http";
-import type { TokenStore } from "./token-store";
+import { toApiError } from './errors';
+import type { TokenResponse, UserCreate, UserRead } from './generated';
+import type { Http } from './http';
+import type { TokenStore } from './token-store';
 
 export interface AuthClient {
   register(credentials: UserCreate): Promise<UserRead>;
@@ -21,8 +21,8 @@ export function createAuth(
 ): AuthClient {
   return {
     register(credentials) {
-      return http.request<UserRead>("/auth/register", {
-        method: "POST",
+      return http.request<UserRead>('/auth/register', {
+        method: 'POST',
         body: JSON.stringify(credentials),
       });
     },
@@ -31,9 +31,9 @@ export function createAuth(
       // The token endpoint expects OAuth2 form encoding, not JSON, and needs no
       // access token — so it bypasses the JSON request helper.
       const response = await fetch(`${baseUrl}/auth/token`, {
-        method: "POST",
-        credentials: "include", // receive the Set-Cookie refresh token
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        method: 'POST',
+        credentials: 'include', // receive the Set-Cookie refresh token
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           username: credentials.username,
           password: credentials.password,
@@ -45,11 +45,11 @@ export function createAuth(
     },
 
     async logout(options) {
-      const query = options?.allDevices ? "?all_devices=true" : "";
+      const query = options?.allDevices ? '?all_devices=true' : '';
       try {
         await fetch(`${baseUrl}/auth/logout${query}`, {
-          method: "POST",
-          credentials: "include",
+          method: 'POST',
+          credentials: 'include',
         });
       } catch {
         // Local logout should succeed even when the server cannot be reached.

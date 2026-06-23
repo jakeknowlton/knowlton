@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 API_ROOT = Path(__file__).resolve().parents[1]
 HTTP_METHODS = {"delete", "get", "patch", "post", "put"}
 

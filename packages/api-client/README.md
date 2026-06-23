@@ -4,13 +4,13 @@ Typed client for the backend API. Owns HTTP and token handling so frontend code
 does not duplicate the security-critical parts.
 
 ```ts
-import { createApiClient } from "@knowlton/api-client";
+import { createApiClient } from '@knowlton/api-client';
 
-const api = createApiClient({ baseUrl: "http://localhost:8000" });
+const api = createApiClient({ baseUrl: 'http://localhost:8000' });
 
 await api.auth.register({ username, password });
 await api.auth.login({ username, password });
-await api.auth.restore();             // revive session from the refresh cookie
+await api.auth.restore(); // revive session from the refresh cookie
 const loads = await api.laundry.list();
 ```
 

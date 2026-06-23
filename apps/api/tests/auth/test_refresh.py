@@ -20,9 +20,7 @@ def _refresh(client: TestClient, token: str | None = None):
     return client.post("/auth/refresh", cookies={"refresh_token": token})
 
 
-def test_refresh_returns_new_access_token(
-    client: TestClient, session: Session
-) -> None:
+def test_refresh_returns_new_access_token(client: TestClient, session: Session) -> None:
     make_user(session, username="alice")
     login(client, username="alice")
 

@@ -1,7 +1,7 @@
-import { createAuth, type AuthClient } from "./auth";
-import { createHttp } from "./http";
-import { createLaundry, type LaundryClient } from "./laundry";
-import { createTokenStore } from "./token-store";
+import { createAuth, type AuthClient } from './auth';
+import { createHttp } from './http';
+import { createLaundry, type LaundryClient } from './laundry';
+import { createTokenStore } from './token-store';
 
 export interface ApiClientConfig {
   /** Base URL of the backend, e.g. "http://localhost:8000". */
@@ -26,7 +26,7 @@ export function createApiClient(config: ApiClientConfig): ApiClient {
   };
 }
 
-export { ApiError } from "./errors";
-export type { AuthClient } from "./auth";
-export type { LaundryClient } from "./laundry";
-export type * from "./generated";
+export { ApiError } from './errors';
+export type { AuthClient } from './auth';
+export type { LaundryClient } from './laundry';
+export type * from './generated';

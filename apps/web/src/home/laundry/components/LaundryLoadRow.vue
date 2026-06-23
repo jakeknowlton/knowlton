@@ -1,38 +1,42 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { LaundryLoadRead } from '@knowlton/api-client'
-import { LAUNDRY_STATUSES, statusLabel, type LaundryStatus } from '@knowlton/shared'
+import { ref } from 'vue';
+import type { LaundryLoadRead } from '@knowlton/api-client';
+import {
+  LAUNDRY_STATUSES,
+  statusLabel,
+  type LaundryStatus,
+} from '@knowlton/shared';
 
-const DEFAULT_DURATION_MINUTES = 45
+const DEFAULT_DURATION_MINUTES = 45;
 
 defineProps<{
-  load: LaundryLoadRead
-  countdown: string | null
-}>()
+  load: LaundryLoadRead;
+  countdown: string | null;
+}>();
 
 const emit = defineEmits<{
-  statusChange: [change: { status: LaundryStatus; durationMinutes: number }]
-  delete: []
-}>()
+  statusChange: [change: { status: LaundryStatus; durationMinutes: number }];
+  delete: [];
+}>();
 
-const durationMinutes = ref(DEFAULT_DURATION_MINUTES)
+const durationMinutes = ref(DEFAULT_DURATION_MINUTES);
 
 function statusFrom(event: Event): LaundryStatus {
-  return (event.target as HTMLSelectElement).value as LaundryStatus
+  return (event.target as HTMLSelectElement).value as LaundryStatus;
 }
 
 function durationFrom(event: Event) {
-  const value = Number((event.target as HTMLInputElement).value)
+  const value = Number((event.target as HTMLInputElement).value);
   durationMinutes.value = Number.isFinite(value)
     ? Math.max(1, value)
-    : DEFAULT_DURATION_MINUTES
+    : DEFAULT_DURATION_MINUTES;
 }
 
 function changeStatus(event: Event) {
   emit('statusChange', {
     status: statusFrom(event),
     durationMinutes: durationMinutes.value,
-  })
+  });
 }
 </script>
 
