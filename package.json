@@ -1,13 +1,17 @@
 {
   "name": "knowlton",
   "version": "0.1.0",
-  "description": "Knowlton monorepo: backend API (apps/api) and frontends (apps/web, apps/mobile).",
+  "description": "Knowlton monorepo: FastAPI backend, Vue web frontend, and shared TypeScript packages.",
   "private": true,
   "scripts": {
     "web": "pnpm --filter web dev",
-    "mobile": "pnpm --filter mobile start",
+    "build": "pnpm --filter web build",
+    "check": "pnpm --filter web check && pnpm --filter @knowlton/shared check && pnpm --filter @knowlton/api-client check && pnpm api:types:check",
+    "verify": "pnpm check && pnpm build && pnpm api:test",
     "api": "cd apps/api && uv run fastapi dev",
-    "api:test": "cd apps/api && uv run pytest"
+    "api:test": "cd apps/api && uv run pytest",
+    "api:types": "cd apps/api && uv run python scripts/generate_ts_types.py ../../packages/api-client/src/generated.ts",
+    "api:types:check": "cd apps/api && uv run python scripts/generate_ts_types.py ../../packages/api-client/src/generated.ts --check"
   },
   "keywords": [],
   "author": "",

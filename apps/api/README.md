@@ -10,5 +10,9 @@ uv run fastapi dev   # serve at http://localhost:8000
 uv run pytest        # run tests
 ```
 
-OpenAPI schema is served at `/openapi.json` — used to generate
-`@knowlton/api-client` for the frontends.
+OpenAPI schema is served at `/openapi.json`. Regenerate the TypeScript schema
+types consumed by `@knowlton/api-client` from the repo root:
+
+```sh
+pnpm api:types
+```

@@ -9,6 +9,5 @@ Scaffold here when ready, e.g.:
 pnpm create expo-app apps/mobile
 ```
 
-Set the package `"name"` to `mobile` so `pnpm --filter mobile` and the root
-`pnpm mobile` script resolve to it. Consume the backend via
-`@knowlton/api-client`.
+When this becomes a real app, add it back to `pnpm-workspace.yaml`, set the
+package `"name"` to `mobile`, and consume the backend via `@knowlton/api-client`.

@@ -1,7 +1,5 @@
 packages:
   - "apps/web"
-  - "apps/mobile"
   - "packages/*"
 allowBuilds:
   esbuild: true
-  "@tailwindcss/oxide": true

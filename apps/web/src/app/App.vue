@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import { api } from "./api";
-import Laundry from "./Laundry.vue";
-import Login from "./Login.vue";
+import { api } from "../shared/api/client";
+import Login from "../auth/components/Login.vue";
+import Laundry from "../home/laundry/components/Laundry.vue";
 
 type SessionStatus = "loading" | "authenticated" | "anonymous";
 

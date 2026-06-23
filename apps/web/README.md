@@ -1,5 +1,33 @@
-# Vue 3 + TypeScript + Vite
+# web
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Vue 3 + TypeScript + Vite frontend for Knowlton.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+```sh
+pnpm web
+pnpm --filter web check
+pnpm --filter web build
+```
+
+The API base URL comes from `VITE_API_URL` and defaults to
+`http://localhost:8000`. The backend must allow the same origin through its
+`FRONTEND_ORIGIN` setting because auth uses credentialed refresh-cookie
+requests.
+
+Source layout:
+
+```
+src/
+  app/                  app boot and session shell
+  auth/
+    components/         login/register UI
+  home/
+    laundry/
+      components/       laundry UI
+      composables/      laundry data, mutations, and timer state
+  shared/
+    api/                API client singleton
+    errors/             cross-feature error helpers
+```
+
+Domain sections should mirror the backend (`home`, then later `food` and
+`goals`). Inside each section, files are grouped by function.

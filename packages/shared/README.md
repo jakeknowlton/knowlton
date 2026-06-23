@@ -1,7 +1,7 @@
 # @knowlton/shared
 
-Framework-agnostic domain model shared by `web` and `mobile`: types and pure
-helpers, no I/O.
+Framework-agnostic domain model shared by frontends: types and pure helpers, no
+I/O.
 
 ```
 src/

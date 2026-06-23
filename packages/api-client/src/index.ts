@@ -29,4 +29,4 @@ export function createApiClient(config: ApiClientConfig): ApiClient {
 export { ApiError } from "./errors";
 export type { AuthClient } from "./auth";
 export type { LaundryClient } from "./laundry";
-export * from "./types";
+export type * from "./generated";

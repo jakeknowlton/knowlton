@@ -1,11 +1,11 @@
 import { toApiError } from "./errors";
+import type { TokenResponse, UserCreate, UserRead } from "./generated";
 import type { Http } from "./http";
 import type { TokenStore } from "./token-store";
-import type { Credentials, TokenResponse, User } from "./types";
 
 export interface AuthClient {
-  register(credentials: Credentials): Promise<User>;
-  login(credentials: Credentials): Promise<void>;
+  register(credentials: UserCreate): Promise<UserRead>;
+  login(credentials: UserCreate): Promise<void>;
   logout(options?: { allDevices?: boolean }): Promise<void>;
   /** Revive a session from the refresh cookie on startup. */
   restore(): Promise<boolean>;
@@ -21,7 +21,7 @@ export function createAuth(
 ): AuthClient {
   return {
     register(credentials) {
-      return http.request<User>("/auth/register", {
+      return http.request<UserRead>("/auth/register", {
         method: "POST",
         body: JSON.stringify(credentials),
       });
@@ -51,8 +51,9 @@ export function createAuth(
           method: "POST",
           credentials: "include",
         });
+      } catch {
+        // Local logout should succeed even when the server cannot be reached.
       } finally {
-        // Drop the local session even if the network call fails.
         tokens.set(null);
       }
     },

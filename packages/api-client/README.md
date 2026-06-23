@@ -1,7 +1,7 @@
 # @knowlton/api-client
 
-Typed client for the backend API, shared by `web` and `mobile`. Owns all HTTP
-and token handling so every frontend gets the security-critical parts right.
+Typed client for the backend API. Owns HTTP and token handling so frontend code
+does not duplicate the security-critical parts.
 
 ```ts
 import { createApiClient } from "@knowlton/api-client";
@@ -32,13 +32,23 @@ src/
   http.ts         fetch wrapper with coalesced refresh-and-retry on 401
   auth.ts         register / login / logout / restore
   laundry.ts      load CRUD
-  types.ts        request/response shapes (re-exports domain types from shared)
+  generated.ts    generated request/response shapes
   errors.ts       ApiError + FastAPI detail extraction
 ```
 
-## Types
+## Generated types
 
-Domain types come from `@knowlton/shared` and are re-exported here alongside the
-request/response shapes. These are currently hand-written to match the backend.
-They could later be generated from the API's OpenAPI schema (e.g. with
-`openapi-typescript`) and swapped in behind this same surface.
+Request and response shapes come from FastAPI's OpenAPI schema:
+
+```sh
+pnpm api:types
+```
+
+`src/generated.ts` is generated. Keep hand-written code in the small client
+modules (`auth.ts`, `http.ts`, `laundry.ts`) so transport and token handling stay
+easy to read.
+
+The generator discovers public types from JSON request bodies and successful
+JSON responses in the OpenAPI paths, then includes any referenced component
+schemas. Form-only internals and validation-error schemas stay out of the
+client surface.

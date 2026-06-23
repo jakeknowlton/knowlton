@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ApiError } from '@knowlton/api-client'
-import { api } from './api'
+import { api } from '../../shared/api/client'
+import { errorMessage } from '../../shared/errors/messages'
 
 type Mode = 'login' | 'register'
 
@@ -9,10 +9,6 @@ const username = ref('')
 const password = ref('')
 const error = ref<string | null>(null)
 const busy = ref(false)
-
-function message(e: unknown): string {
-  return e instanceof ApiError ? e.detail : 'Something went wrong'
-}
 
 async function submit(mode: Mode) {
   error.value = null
@@ -25,7 +21,7 @@ async function submit(mode: Mode) {
 
     await api.auth.login({ username: username.value, password: password.value })
   } catch (e) {
-    error.value = message(e)
+    error.value = errorMessage(e, 'Something went wrong')
   } finally {
     busy.value = false
   }
