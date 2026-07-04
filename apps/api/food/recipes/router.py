@@ -73,7 +73,7 @@ def list_tags(
 def makeable_recipes(
     session: Annotated[Session, Depends(get_session)],
     _: Annotated[User, Depends(get_current_active_user)],
-    have: Annotated[list[int], Query()] = [],
+    have: Annotated[list[int], Query(default_factory=list)],
     max_missing: Annotated[int, Query(ge=0)] = 0,
 ) -> list[MakeableRecipe]:
     return [
@@ -96,8 +96,8 @@ def makeable_recipes(
 def list_recipes(
     session: Annotated[Session, Depends(get_session)],
     _: Annotated[User, Depends(get_current_active_user)],
-    ingredient: Annotated[list[int], Query()] = [],
-    tag: Annotated[list[int], Query()] = [],
+    ingredient: Annotated[list[int], Query(default_factory=list)],
+    tag: Annotated[list[int], Query(default_factory=list)],
     meal_type: MealType | None = None,
     course: Course | None = None,
     q: str | None = None,

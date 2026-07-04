@@ -37,7 +37,7 @@ def test_register_persists_hashed_password(
 def test_register_duplicate_username_returns_400(
     client: TestClient, session: Session
 ) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
 
     response = client.post(
         "/auth/register",

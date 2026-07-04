@@ -8,23 +8,34 @@ relationships (portable across SQLite-now / Postgres-later, which is why we avoi
 DB-engine `ON DELETE`).
 """
 
+# SQLModel's `Relationship(...)` is typed to return `Any`, so every relationship
+# attribute assignment below trips `reportAny`. That is the canonical declaration
+# idiom and unavoidable in our code, so the rule is relaxed for this table-only
+# module (real `Any` leaks in hand-written logic are still caught elsewhere).
+# pyright: reportAny=false
+
 import enum
+from typing import ClassVar, cast
 
 from sqlalchemy import Column
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy import Index, UniqueConstraint
+from sqlalchemy.sql.schema import SchemaItem
 from sqlmodel import Field, Relationship, SQLModel
 
 from food.recipes.enums import Course, IngredientCategory, MealType, Unit
 
 
-def _enum_column(enum_cls: type[enum.Enum], *, nullable: bool) -> Column:
+def _enum_values(enum_cls: type[enum.Enum]) -> list[str]:
+    # `Enum.value` is typed `Any` upstream; these are all `str` enums, so the cast
+    # restores the real element type without a runtime change.
+    return [cast(str, member.value) for member in enum_cls]
+
+
+def _enum_column(enum_cls: type[enum.Enum], *, nullable: bool) -> Column[str]:
     """A column that stores an enum by its string `value` (matching `LaundryStatus`)."""
     return Column(
-        SAEnum(
-            enum_cls,
-            values_callable=lambda cls: [member.value for member in cls],
-        ),
+        SAEnum(enum_cls, values_callable=_enum_values),
         nullable=nullable,
     )
 
@@ -115,7 +126,7 @@ class RecipeIngredient(SQLModel, table=True):
     # `ref_key` is the stable handle a step template uses to refer to this line
     # (e.g. "flour"); unique per recipe. The ingredient_id index powers the
     # shared-ingredient searches (filter / similar / makeable).
-    __table_args__ = (
+    __table_args__: ClassVar[tuple[SchemaItem, ...]] = (
         UniqueConstraint("recipe_id", "ref_key", name="uq_recipe_ingredient_ref_key"),
         Index("ix_recipe_ingredient_ingredient_id", "ingredient_id"),
         Index("ix_recipe_ingredient_recipe_id", "recipe_id"),
@@ -144,7 +155,9 @@ class RecipeIngredient(SQLModel, table=True):
 
 
 class RecipeStep(SQLModel, table=True):
-    __table_args__ = (Index("ix_recipe_step_recipe_id", "recipe_id"),)
+    __table_args__: ClassVar[tuple[SchemaItem, ...]] = (
+        Index("ix_recipe_step_recipe_id", "recipe_id"),
+    )
 
     id: int | None = Field(default=None, primary_key=True)
     # Populated by the `Recipe.steps` relationship on flush (see RecipeIngredient).

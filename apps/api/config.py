@@ -1,8 +1,10 @@
+from typing import ClassVar
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(env_file=".env")
 
     secret_key: str
     algorithm: str = "HS256"
@@ -16,4 +18,7 @@ class Settings(BaseSettings):
     frontend_origin: str = "http://localhost:5173"
 
 
-settings = Settings()  # type: ignore[call-arg]
+# `secret_key` has no default by design (fail-fast if unset); pydantic-settings
+# populates it from the environment / `.env` at runtime, which the type checker
+# can't see, so it reads the constructor as missing a required argument.
+settings = Settings()  # pyright: ignore[reportCallIssue]

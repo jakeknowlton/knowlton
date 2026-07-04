@@ -25,7 +25,7 @@ from food.recipes.units import unit_display
 
 _TOKEN = re.compile(
     r"\{\{ri:(?P<ref>[a-z0-9_-]+)"
-    r"(?:\*(?P<num>\d+)/(?P<den>\d+)|\|(?P<sel>name|amount))?\}\}"
+    + r"(?:\*(?P<num>\d+)/(?P<den>\d+)|\|(?P<sel>name|amount))?\}\}"
 )
 
 

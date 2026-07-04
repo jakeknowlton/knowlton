@@ -1,8 +1,10 @@
 import enum
+from typing import ClassVar, cast
 
 from sqlalchemy import Column
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy import Index, text
+from sqlalchemy.sql.schema import SchemaItem
 from sqlmodel import Field, SQLModel
 
 
@@ -14,13 +16,19 @@ class LaundryStatus(str, enum.Enum):
     DONE = "done"
 
 
+def _enum_values(enum_cls: type[enum.Enum]) -> list[str]:
+    # `Enum.value` is typed `Any` upstream; this is a `str` enum, so the cast
+    # restores the real element type without a runtime change.
+    return [cast(str, member.value) for member in enum_cls]
+
+
 class LaundryLoad(SQLModel, table=True):
     # The washer and dryer are globally shared resources. These partial unique
     # indexes enforce single-occupancy at the database level: at most one row may
     # be in the 'washing' state and at most one in the 'drying' state at a time.
     # Both dialect-specific `where` clauses are supplied so the constraint holds
     # whether the app runs on SQLite (today) or PostgreSQL (later).
-    __table_args__ = (
+    __table_args__: ClassVar[tuple[SchemaItem, ...]] = (
         Index(
             "uq_one_laundry_load_washing",
             "status",
@@ -43,10 +51,7 @@ class LaundryLoad(SQLModel, table=True):
     label: str | None = Field(default=None)
     status: LaundryStatus = Field(
         sa_column=Column(
-            SAEnum(
-                LaundryStatus,
-                values_callable=lambda enum_cls: [member.value for member in enum_cls],
-            ),
+            SAEnum(LaundryStatus, values_callable=_enum_values),
             nullable=False,
         )
     )

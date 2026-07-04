@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from food.recipes import service
+import food.recipes.service as service
 from food.recipes.enums import IngredientCategory
 from food.recipes.models import Ingredient
 from tests.food.recipes.factories import make_alias, make_ingredient, make_tag
@@ -27,7 +27,7 @@ def test_get_or_create_creates_then_dedups(session: Session) -> None:
 
 def test_get_or_create_resolves_alias(session: Session) -> None:
     onion = make_ingredient(session, "green onion")
-    make_alias(session, "scallion", onion)
+    _ = make_alias(session, "scallion", onion)
 
     resolved = service.get_or_create_ingredient(session, "Scallion")
 
@@ -63,9 +63,9 @@ def test_get_or_create_tag_dedups(session: Session) -> None:
 def test_search_ingredients_ranks_prefix_first(
     auth_client: TestClient, session: Session
 ) -> None:
-    make_ingredient(session, "chickpea")  # substring match on "pea"
-    make_ingredient(session, "pea")  # prefix match
-    make_ingredient(session, "peanut")  # prefix match
+    _ = make_ingredient(session, "chickpea")  # substring match on "pea"
+    _ = make_ingredient(session, "pea")  # prefix match
+    _ = make_ingredient(session, "peanut")  # prefix match
 
     response = auth_client.get("/recipes/ingredients", params={"q": "pea"})
 
@@ -78,8 +78,8 @@ def test_search_ingredients_ranks_prefix_first(
 def test_search_ingredients_blank_browses_all(
     auth_client: TestClient, session: Session
 ) -> None:
-    make_ingredient(session, "banana")
-    make_ingredient(session, "apple")
+    _ = make_ingredient(session, "banana")
+    _ = make_ingredient(session, "apple")
 
     response = auth_client.get("/recipes/ingredients")
 
@@ -92,7 +92,7 @@ def test_search_ingredients_respects_limit(
     auth_client: TestClient, session: Session
 ) -> None:
     for name in ["aa", "ab", "ac", "ad"]:
-        make_ingredient(session, name)
+        _ = make_ingredient(session, name)
 
     response = auth_client.get("/recipes/ingredients", params={"limit": 2})
 
@@ -101,8 +101,8 @@ def test_search_ingredients_respects_limit(
 
 
 def test_search_tags(auth_client: TestClient, session: Session) -> None:
-    make_tag(session, "weeknight")
-    make_tag(session, "weekend")
+    _ = make_tag(session, "weeknight")
+    _ = make_tag(session, "weekend")
 
     response = auth_client.get("/recipes/tags", params={"q": "week"})
 

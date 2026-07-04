@@ -6,7 +6,7 @@ from tests.auth.factories import DEFAULT_PASSWORD, login, make_user
 
 
 def test_login_returns_access_token(client: TestClient, session: Session) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
 
     response = login(client, username="alice")
 
@@ -21,7 +21,7 @@ def test_login_returns_access_token(client: TestClient, session: Session) -> Non
 def test_login_sets_httponly_refresh_cookie(
     client: TestClient, session: Session
 ) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
 
     response = login(client, username="alice")
 
@@ -35,7 +35,7 @@ def test_login_sets_httponly_refresh_cookie(
 def test_login_access_token_encodes_username(
     client: TestClient, session: Session
 ) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
 
     token = login(client, username="alice").json()["access_token"]
 
@@ -43,7 +43,7 @@ def test_login_access_token_encodes_username(
 
 
 def test_login_wrong_password_returns_401(client: TestClient, session: Session) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
 
     response = login(client, username="alice", password="wrong-password")
 

@@ -34,10 +34,10 @@ def test_list_returns_all_loads(
 ) -> None:
     # Loads are shared, not owned: every user sees every load.
     assert user.id is not None
-    make_load(session, created_by=user.id, label="mine")
+    _ = make_load(session, created_by=user.id, label="mine")
     other = make_user(session, username="bob")
     assert other.id is not None
-    make_load(session, created_by=other.id, label="theirs")
+    _ = make_load(session, created_by=other.id, label="theirs")
 
     response = auth_client.get("/laundry/loads")
 
@@ -166,7 +166,7 @@ def test_washer_is_shared_across_users(
     other = make_user(session, username="bob")
     assert other.id is not None
     # Another user already occupies the (globally shared) washer.
-    make_load(session, created_by=other.id, status=LaundryStatus.WASHING)
+    _ = make_load(session, created_by=other.id, status=LaundryStatus.WASHING)
     mine = make_load(session, created_by=user.id)
 
     conflict = auth_client.patch(

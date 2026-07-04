@@ -18,7 +18,7 @@ def test_every_unit_has_metadata() -> None:
 
 
 def test_informal_units_have_no_factor() -> None:
-    for unit, (dimension, factor) in UNIT_META.items():
+    for _, (dimension, factor) in UNIT_META.items():
         if dimension is Dimension.INFORMAL:
             assert factor is None
         else:
@@ -75,11 +75,11 @@ def test_convert_round_trip_is_exact() -> None:
 
 def test_convert_across_dimensions_raises() -> None:
     with pytest.raises(IncompatibleUnitsError):
-        convert(Fraction(1), Unit.GRAM, Unit.MILLILITER)
+        _ = convert(Fraction(1), Unit.GRAM, Unit.MILLILITER)
 
 
 def test_convert_informal_raises() -> None:
     with pytest.raises(IncompatibleUnitsError):
-        convert(Fraction(1), Unit.PINCH, Unit.GRAM)
+        _ = convert(Fraction(1), Unit.PINCH, Unit.GRAM)
     with pytest.raises(IncompatibleUnitsError):
-        convert(Fraction(1), Unit.TO_TASTE, Unit.TO_TASTE)
+        _ = convert(Fraction(1), Unit.TO_TASTE, Unit.TO_TASTE)

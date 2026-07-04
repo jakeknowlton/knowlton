@@ -13,7 +13,7 @@ _DUMMY_HASH = hash_password("dummypassword")
 
 def _dummy_verify() -> None:
     # Equalizes response time when a username is not found, preventing timing attacks.
-    verify_password("dummypassword", _DUMMY_HASH)
+    _ = verify_password("dummypassword", _DUMMY_HASH)
 
 
 def _generate_refresh_token() -> str:

@@ -6,8 +6,8 @@ from food.recipes.models import Ingredient
 from tests.food.recipes.factories import make_ingredient
 
 
-def _recipe_payload(**overrides: object) -> dict:
-    payload: dict = {
+def _recipe_payload(**overrides: object) -> dict[str, object]:
+    payload: dict[str, object] = {
         "name": "Pancakes",
         "yield_quantity": "4",
         "yield_unit": "servings",
@@ -66,7 +66,7 @@ def test_create_requires_auth(client: TestClient) -> None:
 def test_create_reuses_existing_catalog_ingredient(
     auth_client: TestClient, session: Session
 ) -> None:
-    make_ingredient(session, "flour")
+    _ = make_ingredient(session, "flour")
 
     response = auth_client.post("/recipes", json=_recipe_payload())
 

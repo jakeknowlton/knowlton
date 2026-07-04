@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from home.laundry.models import LaundryStatus
@@ -17,7 +19,7 @@ class LaundryLoadUpdate(BaseModel):
 
 
 class LaundryLoadRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(from_attributes=True)
 
     id: int
     created_at: int

@@ -25,12 +25,41 @@ testpaths = ["tests"]
 addopts = "-ra"
 
 [tool.basedpyright]
-# `standard` matches upstream pyright's default: it catches real type errors
-# (missing/None-typed args, bad calls) without basedpyright's much stricter
-# `recommended` extras (reportAny, reportUnknownMemberType, missing library
-# stubs), which are noise against FastAPI/SQLModel's dynamic internals.
-typeCheckingMode = "standard"
+typeCheckingMode = "recommended"
 pythonVersion = "3.14"
 venvPath = "."
 venv = ".venv"
 include = ["auth", "food", "home", "scripts", "tests", "config.py", "database.py", "main.py"]
+
+# Application code is checked at the full `recommended` bar with no relaxations.
+# The two execution environments below relax only the rule families that fire
+# solely because of third-party type-incompleteness in test/script code — never
+# anything fixable in our own logic.
+
+# tests/ drives the API through Starlette's TestClient, whose get/post/put/etc.
+# overrides reference httpx's *private* `_types` aliases that basedpyright cannot
+# resolve, so every call resolves to `Unknown`; SQLModel's `select()` results and
+# `Relationship` attributes are likewise `Unknown`/`Any`. The "unknown type"
+# family therefore fires ~330 times in tests with no fix available in our code
+# (annotating the response variable yields `Unknown | Response`, which is worse).
+# Real type errors — bad calls, index errors, type mismatches — are still caught.
+[[tool.basedpyright.executionEnvironments]]
+root = "tests"
+extraPaths = ["."]  # keep the project root importable (auth, food, main, …)
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownParameterType = false
+
+# scripts/generate_ts_types.py walks the OpenAPI document, which is untyped JSON
+# (`dict[str, Any]` at every node) read back from `app.openapi()` and argparse
+# Namespaces. `Any`/`unknown` propagation is inherent to traversing arbitrary
+# JSON and cannot be annotated away without fabricating a schema for the schema.
+[[tool.basedpyright.executionEnvironments]]
+root = "scripts"
+extraPaths = ["."]  # keep the project root importable (main, …)
+reportAny = false
+reportExplicitAny = false
+reportUnknownVariableType = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false

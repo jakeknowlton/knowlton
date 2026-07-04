@@ -14,8 +14,10 @@ def test_filter_by_ingredients_is_and(
     assert user.id is not None
     flour = make_ingredient(session, "flour")
     sugar = make_ingredient(session, "sugar")
-    make_recipe(session, created_by=user.id, name="Cake", ingredients=[flour, sugar])
-    make_recipe(session, created_by=user.id, name="Bread", ingredients=[flour])
+    _ = make_recipe(
+        session, created_by=user.id, name="Cake", ingredients=[flour, sugar]
+    )
+    _ = make_recipe(session, created_by=user.id, name="Bread", ingredients=[flour])
 
     # Both ingredients required -> only the recipe that has both.
     response = auth_client.get("/recipes", params={"ingredient": [flour.id, sugar.id]})
@@ -31,8 +33,10 @@ def test_filter_by_single_ingredient(
     assert user.id is not None
     flour = make_ingredient(session, "flour")
     sugar = make_ingredient(session, "sugar")
-    make_recipe(session, created_by=user.id, name="Cake", ingredients=[flour, sugar])
-    make_recipe(session, created_by=user.id, name="Bread", ingredients=[flour])
+    _ = make_recipe(
+        session, created_by=user.id, name="Cake", ingredients=[flour, sugar]
+    )
+    _ = make_recipe(session, created_by=user.id, name="Bread", ingredients=[flour])
 
     response = auth_client.get("/recipes", params={"ingredient": [flour.id]})
 
@@ -45,7 +49,7 @@ def test_filter_by_tag_meal_type_course_and_q(
 ) -> None:
     assert user.id is not None
     weeknight = make_tag(session, "weeknight")
-    make_recipe(
+    _ = make_recipe(
         session,
         created_by=user.id,
         name="Quick Pasta",
@@ -53,7 +57,7 @@ def test_filter_by_tag_meal_type_course_and_q(
         meal_type=MealType.DINNER,
         course=Course.MAIN,
     )
-    make_recipe(
+    _ = make_recipe(
         session,
         created_by=user.id,
         name="Fancy Pasta",
@@ -78,8 +82,8 @@ def test_filter_no_params_returns_all(
     auth_client: TestClient, user: User, session: Session
 ) -> None:
     assert user.id is not None
-    make_recipe(session, created_by=user.id, name="A")
-    make_recipe(session, created_by=user.id, name="B")
+    _ = make_recipe(session, created_by=user.id, name="A")
+    _ = make_recipe(session, created_by=user.id, name="B")
 
     assert len(auth_client.get("/recipes").json()) == 2
 
@@ -97,10 +101,10 @@ def test_similar_ranks_by_overlap(
     base = make_recipe(
         session, created_by=user.id, name="Base", ingredients=[flour, sugar, egg]
     )
-    make_recipe(
+    _ = make_recipe(
         session, created_by=user.id, name="TwoShared", ingredients=[flour, sugar]
     )
-    make_recipe(session, created_by=user.id, name="OneShared", ingredients=[flour])
+    _ = make_recipe(session, created_by=user.id, name="OneShared", ingredients=[flour])
 
     response = auth_client.get(f"/recipes/{base.id}/similar")
 
@@ -128,7 +132,7 @@ def test_makeable_respects_staples_optional_and_max_missing(
     flour = make_ingredient(session, "flour")
     salt = make_ingredient(session, "salt", is_staple=True)
     nuts = make_ingredient(session, "nuts")
-    make_recipe(
+    _ = make_recipe(
         session,
         created_by=user.id,
         name="Nut Loaf",

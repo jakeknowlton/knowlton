@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
 
-def _scalable_recipe() -> dict:
+def _scalable_recipe() -> dict[str, object]:
     # 4 servings; 2 cups flour, 3 eggs. "Stir in half the flour" exercises a
     # per-token multiplier.
     return {

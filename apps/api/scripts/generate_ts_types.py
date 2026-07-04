@@ -63,7 +63,7 @@ def object_type(schema: dict[str, Any], level: int) -> str:
         optional = "" if name in required else "?"
         lines.append(
             f"{child_indent}{json.dumps(name)}{optional}: "
-            f"{ts_type(child_schema, level + 1)};"
+            + f"{ts_type(child_schema, level + 1)};"
         )
 
     lines.append(f"{indent}}}")
@@ -171,7 +171,7 @@ def public_schema_names(openapi: dict[str, Any]) -> list[str]:
 
 
 def load_openapi() -> dict[str, Any]:
-    os.environ.setdefault("SECRET_KEY", "openapi-generation-only")
+    _ = os.environ.setdefault("SECRET_KEY", "openapi-generation-only")
     os.chdir(API_ROOT)
     sys.path.insert(0, str(API_ROOT))
 
@@ -184,8 +184,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Generate TypeScript component types from the FastAPI OpenAPI schema.",
     )
-    parser.add_argument("output", type=Path)
-    parser.add_argument("--check", action="store_true")
+    _ = parser.add_argument("output", type=Path)
+    _ = parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
 
     output = args.output.resolve()

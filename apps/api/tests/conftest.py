@@ -13,11 +13,11 @@ import os
 # `config.settings`, which is instantiated at import time. Environment variables
 # take precedence over the developer's `.env`, so the suite never depends on
 # local config or touches the real `app.db`.
-os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
-os.environ.setdefault("ALGORITHM", "HS256")
-os.environ.setdefault("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
-os.environ.setdefault("REFRESH_TOKEN_EXPIRE_DAYS", "90")
-os.environ.setdefault("DATABASE_URL", "sqlite://")
+_ = os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
+_ = os.environ.setdefault("ALGORITHM", "HS256")
+_ = os.environ.setdefault("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
+_ = os.environ.setdefault("REFRESH_TOKEN_EXPIRE_DAYS", "90")
+_ = os.environ.setdefault("DATABASE_URL", "sqlite://")
 
 from collections.abc import Generator
 
@@ -97,5 +97,6 @@ def user(session: Session) -> User:
 @pytest.fixture
 def auth_client(client: TestClient, user: User) -> TestClient:
     """A TestClient pre-authenticated as `user` (token attached to all requests)."""
+    _ = user  # Requested so the default user exists for auth_headers to log in as.
     client.headers.update(auth_headers(client))
     return client

@@ -1,11 +1,13 @@
+from typing import cast
+
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from food.recipes.models import Recipe, RecipeIngredient
 
 
-def _payload(**overrides: object) -> dict:
-    payload: dict = {
+def _payload(**overrides: object) -> dict[str, object]:
+    payload: dict[str, object] = {
         "name": "Soup",
         "yield_quantity": "4",
         "yield_unit": "bowls",
@@ -31,15 +33,13 @@ def _payload(**overrides: object) -> dict:
     return payload
 
 
-def _create(auth_client: TestClient) -> dict:
+def _create(auth_client: TestClient) -> dict[str, object]:
     response = auth_client.post("/recipes", json=_payload())
     assert response.status_code == 201
     return response.json()
 
 
-def test_update_full_replace_bumps_version(
-    auth_client: TestClient, session: Session
-) -> None:
+def test_update_full_replace_bumps_version(auth_client: TestClient) -> None:
     created = _create(auth_client)
     recipe_id = created["id"]
 
@@ -87,7 +87,10 @@ def test_update_preserves_id_for_unchanged_ref_key(
     water_id = water_before.id
 
     update = _payload(version=1)
-    update["ingredients"][0]["quantity"] = "8"  # change water amount, same ref_key
+    # `_payload` is typed `dict[str, object]`; reach into the nested list with a
+    # cast before mutating the water line's quantity in place.
+    ingredients = cast(list[dict[str, object]], update["ingredients"])
+    ingredients[0]["quantity"] = "8"  # change water amount, same ref_key
     auth_client.put(f"/recipes/{recipe_id}", json=update)
 
     session.expire_all()

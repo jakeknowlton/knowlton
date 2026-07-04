@@ -46,7 +46,7 @@ def test_parse_quantity_accepts(raw: str, expected: Fraction) -> None:
 )
 def test_parse_quantity_rejects(raw: str) -> None:
     with pytest.raises(InvalidQuantityError):
-        parse_quantity(raw)
+        _ = parse_quantity(raw)
 
 
 # --- columns round-trip -----------------------------------------------------

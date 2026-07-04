@@ -19,7 +19,7 @@ def _refresh(client: TestClient, token: str):
 
 
 def test_logout_returns_204(client: TestClient, session: Session) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
     login(client, username="alice")
 
     response = _logout(client)
@@ -28,7 +28,7 @@ def test_logout_returns_204(client: TestClient, session: Session) -> None:
 
 
 def test_logout_revokes_refresh_token(client: TestClient, session: Session) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
     login(client, username="alice")
     token = refresh_cookie(client)
     assert token is not None
@@ -45,7 +45,7 @@ def test_logout_revokes_refresh_token(client: TestClient, session: Session) -> N
 def test_logout_single_device_leaves_other_sessions(
     client: TestClient, session: Session
 ) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
     login(client, username="alice")
     token_a = refresh_cookie(client)
     login(client, username="alice")  # second session; jar now holds token_b
@@ -82,8 +82,8 @@ def test_logout_all_devices_revokes_every_token(
 def test_logout_all_devices_only_affects_owning_user(
     client: TestClient, session: Session
 ) -> None:
-    make_user(session, username="alice")
-    make_user(session, username="bob")
+    _ = make_user(session, username="alice")
+    _ = make_user(session, username="bob")
     login(client, username="alice")
     alice_token = refresh_cookie(client)
     login(client, username="bob")

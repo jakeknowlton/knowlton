@@ -7,6 +7,8 @@ requires scaling and step rendering, so they are assembled in the service layer
 rather than validated straight off ORM rows.
 """
 
+from typing import ClassVar
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from food.recipes.enums import Course, IngredientCategory, MealType, Unit
@@ -18,7 +20,7 @@ REF_KEY_PATTERN = r"^[a-z0-9_-]+$"
 def _ensure_parseable(value: str) -> str:
     """Validate a quantity string, surfacing parse errors as Pydantic 422s."""
     try:
-        parse_quantity(value)
+        _ = parse_quantity(value)
     except InvalidQuantityError as exc:
         raise ValueError(str(exc)) from exc
     return value
@@ -28,7 +30,7 @@ def _ensure_parseable(value: str) -> str:
 
 
 class IngredientRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(from_attributes=True)
 
     id: int
     name: str
@@ -38,7 +40,7 @@ class IngredientRead(BaseModel):
 
 
 class TagRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(from_attributes=True)
 
     id: int
     name: str

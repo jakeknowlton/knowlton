@@ -21,7 +21,7 @@ def _refresh(client: TestClient, token: str | None = None):
 
 
 def test_refresh_returns_new_access_token(client: TestClient, session: Session) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
     login(client, username="alice")
 
     response = _refresh(client)
@@ -33,7 +33,7 @@ def test_refresh_returns_new_access_token(client: TestClient, session: Session) 
 
 
 def test_refresh_rotates_cookie(client: TestClient, session: Session) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
     login(client, username="alice")
     old = refresh_cookie(client)
 
@@ -45,7 +45,7 @@ def test_refresh_rotates_cookie(client: TestClient, session: Session) -> None:
 def test_refresh_old_token_invalid_after_rotation(
     client: TestClient, session: Session
 ) -> None:
-    make_user(session, username="alice")
+    _ = make_user(session, username="alice")
     login(client, username="alice")
     old = refresh_cookie(client)
     assert old is not None
